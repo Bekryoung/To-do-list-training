@@ -1,103 +1,110 @@
 <!DOCTYPE html>
+
 <html>
 
-<head>
+  <head>
 
-  <title>
-  To-Do List page 3
-  </title>
+    <title>
+      To-Do List page 3
+    </title>
 
-  <style>
-  /* CSS영역 추가 */
-  </style>
+    <style>
+      /* CSS영역 추가 */
+    </style>
 
-</head>
+  </head>
 
-<body>
+  <body>
 
-  <div id="head_area">
-    <div id="head_title">
-      <h1>To-Do List 3</h1>
+    <header>
+      <div>
+        <h1>To-Do List 3</h1>
+      </div>
+      <input onkeyup="enterInput();" type="text" id="write_box" placeholder="Write Here">
+      <input onclick="newElement();" type="button" id="write_button" value="Write">
+      <input onclick="clearElement();" type="button" id="clear_button" value="clear">
+    </header>
+
+    <hr />
+
+    <div id="list_area">
+      <ul id="td_lists">
+      </ul>
     </div>
-    <input onkeyup="enterInput();" type="text" id="write_box" placeholder="Write Here">
-    <input onclick="newElement();" type="button" id="write_button" value="Write">
-    <input onclick="clearElement();" type="button" id="clear_button" value="clear">
-  </div>
 
-  <hr id="div_line">
+    <hr />
 
-  <div id="list_area">
-    <ul id="td_lists">
-    </ul>
-  </div>
+    <footer><small>This page is builded by <a href="mailto:bekryoung@gmail.com">FlowerDog</a></small></footer>
 
-  <hr id="foot_line">
+  </body>
 
-  <footer id="foot"><small>This page is builded by FlowerDog</small></footer>
+  <script>
+    var tdl = document.querySelector('#td_lists');
+    getValues();
 
-<script>
-var tdl = document.querySelector('#td_lists');
-getValues();
+    function newElement() {
+      var li = document.createElement('li');
+      var inputValue = document.getElementById('write_box').value;
+      var t = document.createTextNode(inputValue);
+      li.appendChild(t);
+      if (inputValue === '') {
+        alert('You must write something!');
+      } else {
+        tdl.appendChild(li);
+      }
+      document.getElementById('write_box').value = '';
+      var span = document.createElement('button');
+      var txt = document.createTextNode('\u00D7');
+      span.className = 'close';
+      span.appendChild(txt);
+      li.appendChild(span);
+      span.onclick = function () {
+        var div = this.parentElement;
+        div.parentElement.removeChild(div);
+        store();
+      }
 
+      store();
 
-function newElement() {
-  var li = document.createElement("li");
-  var inputValue = document.getElementById("write_box").value;
-  var t = document.createTextNode(inputValue);
-  li.appendChild(t);
-  if (inputValue === '') {
-    alert("You must write something!");
-  } else {
-    tdl.appendChild(li);
-  }
-  document.getElementById("write_box").value = "";
-  var span = document.createElement('button');
-  var txt = document.createTextNode("\u00D7");
-  span.className = "close";
-  span.appendChild(txt);
-  li.appendChild(span);
+    }
 
-  del();
-  store();
+    function enterInput() {
+      if (window.event.keyCode == 13) {
+        newElement();
+      }
+    }
 
-}
-
-function enterInput() {
-if (window.event.keyCode == 13){
-  newElement();
-}
-}
-
-function del(){
-    var close = document.getElementsByClassName("close");
-        var i;
-        for (i = 0; i < close.length; i++) {
-          close[i].onclick = function() {
-            var div=this.parentElement;
-            div.parentElement.removeChild(div);
-            store();
-          }
+    function del() {
+      var close = document.getElementsByClassName('close');
+      var i;
+      for (i = 0; i < close.length; i++) {
+        close[i].onclick = function () {
+          var div = this.parentElement;
+          div.parentElement.removeChild(div);
+          store();
         }
-  }
+      }
+    }
 
-function store() {
-  window.localStorage.tdlsave = tdl.innerHTML;
-}
+    function store() {
+      window.localStorage.setItem('tdlsave', tdl.innerHTML);
+    }
 
-function getValues() {
-  var storedValues = window.localStorage.tdlsave;
-  if (!storedValues){
-    tdl.innerHTML='';
-  } else {
-    tdl.innerHTML = storedValues;
-    del();
-  }
-}
+    function getValues() {
+      var storedValues = window.localStorage.getItem('tdlsave');
+      if (!storedValues) {
+        tdl.innerHTML = '';
+      } else {
+        tdl.innerHTML = storedValues;
+      }
+      del();
+    }
 
-function clearElement() {
-  window.localStorage.clear();
-  getValues();
-}
+    function clearElement() {
+      window.localStorage.clear();
+      getValues();
+    }
 
-</script>
-</body>
+  </script>
+
+</html>

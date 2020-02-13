@@ -133,6 +133,7 @@
                     alert('You have to write different.');
                 } else {
                     targetTDObject.doing = editInput;
+                    targetTD.childNodes[1].nodeValue = editInput;
                     save_tdl_array();
                 }
                 break;

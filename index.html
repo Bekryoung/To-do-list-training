@@ -1,110 +1,202 @@
 <!DOCTYPE html>
-
+<meta charset="UTF-8">
 <html>
 
-  <head>
-
-    <title>
-      To-Do List page 3
-    </title>
-
+<head>
+    <title>To-Do list ver.2</title>
     <style>
-      /* CSS영역 추가 */
+        /* CSS 영역 */
     </style>
+</head>
 
-  </head>
-
-  <body>
-
+<body>
     <header>
-      <div>
-        <h1>To-Do List 3</h1>
-      </div>
-      <input onkeyup="enterInput();" type="text" id="write_box" placeholder="Write Here">
-      <input onclick="newElement();" type="button" id="write_button" value="Write">
-      <input onclick="clearElement();" type="button" id="clear_button" value="clear">
+        <div>
+            <h1>To do list ver.2</h1>
+        </div>
+        <input type="text" id="writeBox" placeholder="Write Here..." />
+        <input type="button" id="writeButton" value="update" />
     </header>
 
     <hr />
 
-    <div id="list_area">
-      <ul id="td_lists">
-      </ul>
+    <div>
+        <ul id="toDoList"></ul>
     </div>
+
+    <input type="button" id="selDelbutton" value="Sel Del" />
+    <input type="button" id="delAllbutton" value="Del all" />
 
     <hr />
 
     <footer><small>This page is builded by <a href="mailto:bekryoung@gmail.com">FlowerDog</a></small></footer>
 
-  </body>
 
-  <script>
-    var tdl = document.querySelector('#td_lists');
-    getValues();
-
-    function newElement() {
-      var li = document.createElement('li');
-      var inputValue = document.getElementById('write_box').value;
-      var t = document.createTextNode(inputValue);
-      li.appendChild(t);
-      if (inputValue === '') {
-        alert('You must write something!');
-      } else {
-        tdl.appendChild(li);
-      }
-      document.getElementById('write_box').value = '';
-      var span = document.createElement('button');
-      var txt = document.createTextNode('\u00D7');
-      span.className = 'close';
-      span.appendChild(txt);
-      li.appendChild(span);
-      span.onclick = function () {
-        var div = this.parentElement;
-        div.parentElement.removeChild(div);
-        store();
-      }
-
-      store();
-
-    }
-
-    function enterInput() {
-      if (window.event.keyCode === 13) {
-        newElement();
-      }
-    }
-
-    function del() {
-      var close = document.getElementsByClassName('close');
-      var i;
-      for (i = 0; i < close.length; i++) {
-        close[i].onclick = function () {
-          var div = this.parentElement;
-          div.parentElement.removeChild(div);
-          store();
-        }
-      }
-    }
-
-    function store() {
-      window.localStorage.setItem('tdlsave', tdl.innerHTML);
-    }
-
-    function getValues() {
-      var storedValues = window.localStorage.getItem('tdlsave');
-      if (!storedValues) {
-        tdl.innerHTML = '';
-      } else {
-        tdl.innerHTML = storedValues;
-      }
-      del();
-    }
-
-    function clearElement() {
-      window.localStorage.clear();
-      getValues();
-    }
-
-  </script>
+</body>
 
 </html>
+
+<script>
+
+    //HTML 변수선언
+
+    var toDoList = document.getElementById('toDoList');
+    var writeBox = document.getElementById('writeBox');
+    var writeButton = document.getElementById('writeButton');
+    var selDelbutton = document.getElementById('selDelbutton');
+    var delAllbutton = document.getElementById('delAllbutton');
+
+    var tdlArray = []; // 할일 오브젝트 배열
+    let idNumber = 0;
+
+    //HTML 변수선언 끝!
+
+    //기능 HTHL
+
+    var checkBox = document.createElement('input');
+    checkBox.setAttribute('type', 'checkbox');
+    checkBox.className = 'checkBox';
+
+    var editButton = document.createElement('input');
+    editButton.setAttribute('type', 'button');
+    editButton.setAttribute('value', 'Edit');
+    editButton.className = 'editButton';
+
+    var delbutton = document.createElement('input');
+    delbutton.setAttribute('type', 'button');
+    delbutton.setAttribute('value', '\u00D7');
+    delbutton.className = 'delButton';
+
+    //기능 HTHL 끝!
+
+    load_tdl_array();
+
+    //엔터키
+    writeBox.addEventListener('keydown', enter);
+    function enter() {
+        var keyInput = window.event.keyCode;
+        if (keyInput === 13) {
+            add_td();
+        }
+    }
+
+    writeButton.addEventListener('click', add_td);
+
+    toDoList.addEventListener('click', button_td);
+
+    //할일추가 리스트 업
+    function add_td() {
+        if (!writeBox.value) {
+            alert('You have to write something.')
+        } else {
+            var newTD = {
+                doingID: 'doingID_' + idNumber,
+                doing: writeBox.value,
+                finish: false,
+                updateTime: new Date()
+            }
+            tdlArray.push(newTD);
+            var li = document.createElement('li');
+            li.setAttribute('id', newTD.doingID);
+            li.appendChild(checkBox.cloneNode());
+            li.appendChild(document.createTextNode(newTD.doing));
+            li.appendChild(editButton.cloneNode());
+            li.appendChild(delbutton.cloneNode());
+            toDoList.appendChild(li);
+
+            ++idNumber;
+            save_tdl_array();
+        }
+        writeBox.value = '';
+    }
+
+    //라인버튼 스크립트
+    function button_td(e) {
+        var targetTD = e.target.parentElement;
+        var targetTDObject = tdlArray.find(Element => {
+            return Element.doingID === targetTD.getAttribute('id');
+        });
+
+        switch (e.target.className) {
+            case 'delButton':
+                tdlArray.splice(tdlArray.indexOf(targetTDObject), 1);
+                targetTD.parentElement.removeChild(targetTD);
+                save_tdl_array();
+                break;
+
+            case 'editButton':
+                var editInput = prompt('Write to edit', targetTDObject.doing);
+                if (editInput === null) {
+                } else if (!editInput) {
+                    alert('You have to write something.');
+                } else if (editInput === targetTDObject.doing) {
+                    alert('You have to write different.');
+                } else {
+                    targetTDObject.doing = editInput;
+                    targetTD.childNodes[1].nodeValue = editInput;
+                    save_tdl_array();
+                }
+                break;
+
+            default:
+                break;
+        }
+    }
+
+    //선택항목 삭제
+    selDelbutton.addEventListener('click', sel_del);
+    function sel_del() {
+        var selLi = document.querySelectorAll('.checkBox:checked');
+        if (selLi.length === 0) {
+            alert('You have to check to delete.')
+        } else {
+            selLi.forEach(Element => {
+                var selLiParent = Element.parentElement;
+                var selTDObject = tdlArray.find(Element2 => {
+                    return Element2.doingID === selLiParent.getAttribute('id');
+                });
+                tdlArray.splice(tdlArray.indexOf(selTDObject), 1);
+                selLiParent.parentElement.removeChild(selLiParent);
+            })
+            save_tdl_array();
+        }
+    }
+
+    //할일리스트 저장하기
+    function save_tdl_array() {
+        window.localStorage.setItem('tdlArray', JSON.stringify(tdlArray));
+        window.localStorage.setItem('idNumber', JSON.stringify(idNumber));
+    }
+
+    //할일리스트 가져오기
+    function load_tdl_array() {
+        var lodedTdl = JSON.parse(window.localStorage.getItem('tdlArray'));
+        var lodedIDNumber = JSON.parse(window.localStorage.getItem('idNumber'));
+        if (typeof lodedIDNumber === 'number') {
+            idNumber = lodedIDNumber;
+        }
+        if (Array.isArray(lodedTdl)) {
+            tdlArray = lodedTdl;
+            tdlArray.forEach(Element => {
+                var li = document.createElement('li');
+                li.setAttribute('id', Element.doingID);
+                li.appendChild(checkBox.cloneNode());
+                li.appendChild(document.createTextNode(Element.doing));
+                li.appendChild(editButton.cloneNode());
+                li.appendChild(delbutton.cloneNode());
+                toDoList.appendChild(li);
+            })
+        } else if (!lodedTdl) {
+            tdlArray = [];
+        }
+    }
+
+    //초기화
+    delAllbutton.addEventListener('click', clear_tdl_array)
+    function clear_tdl_array() {
+        window.localStorage.clear('tdlArray');
+        window.localStorage.clear('idNumber');
+        location.reload();
+    }
+
+</script>

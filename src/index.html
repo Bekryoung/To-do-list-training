@@ -25,8 +25,8 @@
         <ul id="toDoList"></ul>
     </div>
 
-    <input type="button" id="selDelbutton" value="Sel Del" />
-    <input type="button" id="delAllbutton" value="Del all" />
+    <button id="selDelbutton" class="btn btn-warning">Sel del</button>
+    <button id="delAllbutton" class="btn btn-danger">Del all</button>
 
     <hr />
 
@@ -56,11 +56,11 @@
 
     const createLine = (targetElement) => {
         var li = document.createElement('li');
-        li.setAttribute('id',targetElement.doingID);
+        li.setAttribute('id', targetElement.doingID);
         li.innerHTML = `<input type="checkBox" class="checkBox" />
         ${targetElement.doing}
-        <button class="editButton">Edit</button>
-        <button class="delButton">\u00D7</button>`;
+        <button class="editButton btn btn-info">Edit</button>
+        <button class="delButton btn btn-danger">\u00D7</button>`;
         toDoList.appendChild(li);
     }
 
@@ -108,29 +108,23 @@
             return Element.doingID === targetTD.getAttribute('id');
         });
 
-        switch (e.target.className) {
-            case 'delButton':
-                tdlArray.splice(tdlArray.indexOf(targetTDObject), 1);
-                targetTD.parentElement.removeChild(targetTD);
+        var targetClass = e.target.className;
+        if (targetClass.includes('delButton')) {
+            tdlArray.splice(tdlArray.indexOf(targetTDObject), 1);
+            targetTD.parentElement.removeChild(targetTD);
+            save_tdl_array();
+        } else if (targetClass.includes('editButton')) {
+            var editInput = prompt('Write to edit', targetTDObject.doing);
+            if (editInput === null) {
+            } else if (!editInput) {
+                alert('You have to write something.');
+            } else if (editInput === targetTDObject.doing) {
+                alert('You have to write different.');
+            } else {
+                targetTDObject.doing = editInput;
+                targetTD.childNodes[1].nodeValue = editInput;
                 save_tdl_array();
-                break;
-
-            case 'editButton':
-                var editInput = prompt('Write to edit', targetTDObject.doing);
-                if (editInput === null) {
-                } else if (!editInput) {
-                    alert('You have to write something.');
-                } else if (editInput === targetTDObject.doing) {
-                    alert('You have to write different.');
-                } else {
-                    targetTDObject.doing = editInput;
-                    targetTD.childNodes[1].nodeValue = editInput;
-                    save_tdl_array();
-                }
-                break;
-
-            default:
-                break;
+            }
         }
     }
 

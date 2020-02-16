@@ -54,19 +54,15 @@
 
     //기능 HTHL
 
-    var checkBox = document.createElement('input');
-    checkBox.setAttribute('type', 'checkbox');
-    checkBox.className = 'checkBox';
-
-    var editButton = document.createElement('input');
-    editButton.setAttribute('type', 'button');
-    editButton.setAttribute('value', 'Edit');
-    editButton.className = 'editButton';
-
-    var delbutton = document.createElement('input');
-    delbutton.setAttribute('type', 'button');
-    delbutton.setAttribute('value', '\u00D7');
-    delbutton.className = 'delButton';
+    const createLine = (targetElement) => {
+        var li = document.createElement('li');
+        li.setAttribute('id',targetElement.doingID);
+        li.innerHTML = `<input type="checkBox" class="checkBox" />
+        ${targetElement.doing}
+        <button class="editButton">Edit</button>
+        <button class="delButton">\u00D7</button>`;
+        toDoList.appendChild(li);
+    }
 
     //기능 HTHL 끝!
 
@@ -90,20 +86,14 @@
         if (!writeBox.value) {
             alert('You have to write something.')
         } else {
-            var newTD = {
+            var Element = {
                 doingID: 'doingID_' + idNumber,
                 doing: writeBox.value,
                 finish: false,
                 updateTime: new Date()
             }
-            tdlArray.push(newTD);
-            var li = document.createElement('li');
-            li.setAttribute('id', newTD.doingID);
-            li.appendChild(checkBox.cloneNode());
-            li.appendChild(document.createTextNode(newTD.doing));
-            li.appendChild(editButton.cloneNode());
-            li.appendChild(delbutton.cloneNode());
-            toDoList.appendChild(li);
+            tdlArray.push(Element);
+            createLine(Element);
 
             ++idNumber;
             save_tdl_array();
@@ -182,13 +172,7 @@
         if (Array.isArray(lodedTdl)) {
             tdlArray = lodedTdl;
             tdlArray.forEach(Element => {
-                var li = document.createElement('li');
-                li.setAttribute('id', Element.doingID);
-                li.appendChild(checkBox.cloneNode());
-                li.appendChild(document.createTextNode(Element.doing));
-                li.appendChild(editButton.cloneNode());
-                li.appendChild(delbutton.cloneNode());
-                toDoList.appendChild(li);
+                createLine(Element);
             })
         } else if (!lodedTdl) {
             tdlArray = [];

@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<meta charset="UTF-8">
+<html>
+
+<head>
+
+  <title>
+    To-Do List page
+  </title>
+
+  <style>
+    /* CSS영역 추가 */
+  </style>
+
+</head>
+
+<body>
+
+  <header>
+    <div>
+      <h1>To-Do List 3</h1>
+    </div>
+    <input onkeyup="enterInput();" type="text" id="write_box" placeholder="Write Here">
+    <input onclick="newElement();" type="button" id="write_button" value="Write">
+    <input onclick="clearElement();" type="button" id="clear_button" value="clear">
+  </header>
+
+  <hr />
+
+  <div>
+    <ul id="td_lists">
+    </ul>
+  </div>
+  <input onclick="del_check();" type="button" id="SelDedl_button" value="Del Select">
+  <hr />
+
+  <footer><small>This page is builded by <a href="mailto:bekryoung@gmail.com">FlowerDog</a></small></footer>
+
+</body>
+
+<script>
+  var tdl = document.querySelector('#td_lists');
+
+  //체크박스
+  var c_box = document.createElement('input');
+  c_box.setAttribute('type', 'checkbox');
+  c_box.className = 'cd_box';
+
+  //수정버튼
+  var edit_btn = document.createElement('input');
+  edit_btn.setAttribute('type', 'button');
+  edit_btn.setAttribute('value', 'Edit');
+  edit_btn.className = 'Edit';
+
+  //삭제버튼
+  var del_btn = document.createElement('input');
+  del_btn.setAttribute('type', 'button');
+  del_btn.setAttribute('value', '\u00D7');
+  del_btn.className = 'Delete'
+
+  get_values();
+
+  function newElement() {
+
+    var input_value = document.getElementById('write_box').value;
+
+    if (!input_value) {
+      alert('You must write something!');
+    } else {
+      var li = document.createElement('li');
+
+      //내용
+      var t = document.createTextNode(input_value);
+
+      li.insertBefore(c_box.cloneNode(), li.firstChild);//체크박스 추가
+      li.appendChild(t.cloneNode());//내용 추가
+      li.appendChild(edit_btn.cloneNode());//수정버튼 추가
+      li.appendChild(del_btn.cloneNode());//삭제버튼 추가
+      document.getElementById('write_box').value = '';//입력칸 초기화
+      tdl.appendChild(li);//li 추가
+
+      store();
+
+    }
+  }
+
+  function enterInput() {
+    if (window.event.keyCode === 13) {
+      newElement();
+    }
+  }
+
+  //버튼 이벤트리스너 추가
+  tdl.addEventListener('click', btn_del);
+
+  //버튼기능~~~~//
+  function btn_del(e) {
+    var div = e.target.parentElement;
+    switch (e.target.className) {
+
+      //삭제기능
+      case 'Delete':
+        div.parentElement.removeChild(div);
+        store();
+        break;
+
+      //수정기능
+      case 'Edit':
+        var edit_input = prompt('Write to edit');
+        var old_todo = div.childNodes[1];
+        if (edit_input === null) {
+        } else if (!edit_input) {
+          alert('You must write something!');
+        } else if (edit_input === old_todo.nodeValue) {
+          alert('You must write to different!');
+        } else {
+          var new_todo = document.createTextNode(edit_input);
+          div.replaceChild(new_todo, old_todo);
+          store();
+        }
+        break;
+
+      //default
+      default:
+        break;
+    }
+  }
+  //~~~~버튼기능//
+
+  //저장
+  function store() {
+    window.localStorage.setItem('tdlsave', tdl.innerHTML);
+  }
+
+  //불러오기
+  function get_values() {
+    var stored_values = window.localStorage.getItem('tdlsave');
+    if (!stored_values) {
+      tdl.innerHTML = '';
+    } else {
+      tdl.innerHTML = stored_values;
+    }
+    var tdl_list_up = tdl.getElementsByTagName('li')
+    Array.from(tdl_list_up).forEach(element => {
+      var tdl_txt = element.textContent;//텍스트저장
+      while (element.hasChildNodes()) {
+        element.removeChild(element.firstChild);
+      }
+      element.appendChild(c_box.cloneNode());//체크박스 추가
+      element.appendChild(document.createTextNode(tdl_txt));//텍스트 추가
+      element.appendChild(edit_btn.cloneNode());//수정버튼 추가
+      element.appendChild(del_btn.cloneNode());//삭제버튼 추가
+    })
+
+  }
+
+  //초기화
+  function clearElement() {
+    window.localStorage.clear();
+    get_values();
+  }
+
+  //체크박스 삭제 기능
+  function del_check() {
+    var c_i;
+    var sel_c_box = document.querySelectorAll('.cd_box:checked');
+    if (!sel_c_box.length) {
+      alert('nothing checked.')
+    } else if (confirm('delete selected?') === true) {
+      Array.from(sel_c_box).forEach(element => {
+        var c_div = element.parentElement;
+        c_div.parentElement.removeChild(c_div);
+      })
+    }
+    store();
+  }
+
+</script>
+
+</html>

@@ -4,7 +4,8 @@
 
 <head>
     <title>To-Do list ver.2</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <style type="text/css">
     </style>
 </head>
@@ -150,15 +151,18 @@
         if (selLi.length === 0) {
             alert('You have to check to delete.')
         } else {
-            selLi.forEach(Element => {
-                var selLiParent = Element.parentElement;
-                var selTDObject = tdlArray.find(Element2 => {
-                    return Element2.doingID === selLiParent.getAttribute('id');
-                });
-                tdlArray.splice(tdlArray.indexOf(selTDObject), 1);
-                selLiParent.parentElement.removeChild(selLiParent);
-            })
-            save_tdl_array();
+            var selDelCheck = confirm('Delete?');
+            if (selDelCheck === true) {
+                selLi.forEach(Element => {
+                    var selLiParent = Element.parentElement;
+                    var selTDObject = tdlArray.find(Element2 => {
+                        return Element2.doingID === selLiParent.getAttribute('id');
+                    });
+                    tdlArray.splice(tdlArray.indexOf(selTDObject), 1);
+                    selLiParent.parentElement.removeChild(selLiParent);
+                })
+                save_tdl_array();
+            }
         }
     }
 

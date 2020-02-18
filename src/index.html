@@ -22,16 +22,19 @@
     <hr />
 
     <div>
-        <ul id="toDoList"></ul>
+        <ul id="toDoList" class="list-group"></ul>
     </div>
 
-    <button id="selDelbutton" class="btn btn-warning">Sel del</button>
-    <button id="delAllbutton" class="btn btn-danger">Del all</button>
+    <footer>
+        <hr />
 
-    <hr />
+        <button id="selDelbutton" class="btn btn-warning btn-sm">Sel del</button>
+        <button id="delAllbutton" class="btn btn-danger btn-sm">Del all</button>
 
-    <footer><small>This page is builded by <a href="mailto:bekryoung@gmail.com">FlowerDog</a></small></footer>
+        <hr />
 
+        <small>This page is builded by <a href="mailto:bekryoung@gmail.com">FlowerDog</a></small>
+    </footer>
 
 </body>
 
@@ -57,10 +60,11 @@
     const createLine = (targetElement) => {
         var li = document.createElement('li');
         li.setAttribute('id', targetElement.doingID);
+        li.setAttribute('class', 'list-group-item');
         li.innerHTML = `<input type="checkBox" class="checkBox" />
         ${targetElement.doing}
-        <button class="editButton btn btn-info">Edit</button>
-        <button class="delButton btn btn-danger">\u00D7</button>`;
+        <button class="editButton btn btn-info btn-sm">Edit</button>
+        <button class="delButton btn btn-danger btn-sm">\u00D7</button>`;
         toDoList.appendChild(li);
     }
 
